@@ -1,0 +1,2 @@
+[INFO]: OpenGL Version:4.4.0 - Build 20.19.15.4549 in file: d:\fromdesktop\classengine\classengine\engine\core\window.cppon line: 50
+[INFO]: Everything initialized fine in EngineClass in file: d:\fromdesktop\classengine\classengine\engine\core\engineclass.cppon line: 45
