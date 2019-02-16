@@ -1,0 +1,45 @@
+﻿D:\Program Files (x86)\Microsoft Visual Studio\2017\Community\Common7\IDE\VC\VCTargets\Microsoft.CppBuild.targets(391,5): warning MSB8028: The intermediate directory (Debug\) contains files shared from another project (ClassEngine.vcxproj).  This can lead to incorrect clean and rebuild behavior.
+  BasicLight.cpp
+d:\users\alton\documents\github\dream-z-engine\dreamzengine\engine\fx\basiclight.cpp(145): warning C4018: '<': signed/unsigned mismatch
+  AudioLoader.cpp
+  AudioHandler.cpp
+  Camera.cpp
+  Debug.cpp
+  EngineClass.cpp
+  stb_image.cpp
+  Main.cpp
+  Window.cpp
+  Timer.cpp
+  CollisionDetection.CPP
+  CollisionHandler.cpp
+  GameObject.cpp
+  EventListener.cpp
+  SkyBox.cpp
+  Terrain.cpp
+d:\users\alton\documents\github\dream-z-engine\dreamzengine\engine\rendering\3d\terrain.cpp(78): warning C4018: '<': signed/unsigned mismatch
+  Game1.cpp
+  Mesh.cpp
+d:\users\alton\documents\github\dream-z-engine\dreamzengine\engine\rendering\3d\mesh.cpp(52): warning C4018: '<': signed/unsigned mismatch
+d:\users\alton\documents\github\dream-z-engine\dreamzengine\engine\rendering\3d\mesh.cpp(74): warning C4018: '<': signed/unsigned mismatch
+  Model.cpp
+  ShaderHandler.cpp
+  Generating Code...
+  Compiling...
+  TextureHandler.cpp
+  LightSource.cpp
+  LoadOBJModel.cpp
+  MouseEventListener.cpp
+d:\users\alton\documents\github\dream-z-engine\dreamzengine\engine\events\mouseeventlistener.cpp(24): warning C4551: function call missing argument list
+d:\users\alton\documents\github\dream-z-engine\dreamzengine\engine\events\mouseeventlistener.cpp(79): warning C4244: '=': conversion from 'T' to 'int', possible loss of data
+          with
+          [
+              T=float
+          ]
+  SceneGraph.cpp
+  MaterialsHandler.cpp
+  MaterialLoader.cpp
+  OctSpatialPartition.cpp
+  Shader.cpp
+  LightingManager.cpp
+  Generating Code...
+  ClassEngine.vcxproj -> D:\Users\Alton\Documents\GitHub\Dream-Z-Engine\Debug\DreamZEngine.exe
