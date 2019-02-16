@@ -1,2 +1,2 @@
-[INFO]: OpenGL Version:4.4.0 - Build 20.19.15.4549 in file: d:\fromdesktop\dreamzengine\dreamzengine\engine\core\window.cppon line: 50
-[INFO]: Everything initialized fine in EngineClass in file: d:\fromdesktop\dreamzengine\dreamzengine\engine\core\engineclass.cppon line: 45
+[INFO]: OpenGL Version:4.4.0 - Build 20.19.15.4549 in file: d:\users\alton\documents\github\dream-z-engine\classengine\engine\core\window.cppon line: 50
+[INFO]: Everything initialized fine in EngineClass in file: d:\users\alton\documents\github\dream-z-engine\classengine\engine\core\engineclass.cppon line: 45
