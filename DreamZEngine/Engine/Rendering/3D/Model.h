@@ -60,7 +60,7 @@ public:
 	BoundingBox GetBoundingBox();
 
 private:
-	BoundingBox box;
+	BoundingBox boundingBox;
 };
 
 

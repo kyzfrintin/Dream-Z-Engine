@@ -110,6 +110,36 @@ Mesh Model::processMesh(aiMesh *mesh, const aiScene *scene)
 		vector.x = mesh->mVertices[i].x;
 		vector.y = mesh->mVertices[i].y;
 		vector.z = mesh->mVertices[i].z;
+		if (boundingBox.minVert.x > mesh->mVertices[i].x)
+		{
+			boundingBox.minVert.x = mesh->mVertices[i].x;
+		}
+
+		if (boundingBox.minVert.y > mesh->mVertices[i].y)
+		{
+			boundingBox.minVert.y = mesh->mVertices[i].y;
+		}
+		if (boundingBox.minVert.z > mesh->mVertices[i].z)
+		{
+
+			boundingBox.minVert.z = mesh->mVertices[i].z;
+		}
+
+		if (boundingBox.maxVert.x < mesh->mVertices[i].x)
+		{
+			boundingBox.maxVert.x = mesh->mVertices[i].x;
+
+		}
+		if (boundingBox.maxVert.y < mesh->mVertices[i].y)
+		{
+
+			boundingBox.maxVert.y = mesh->mVertices[i].y;
+		}
+		if (boundingBox.maxVert.z < mesh->mVertices[i].z)
+		{
+			boundingBox.maxVert.z = mesh->mVertices[i].z;
+
+		}
 		vertex.Position = vector;
 		// normals
 		vector.x = mesh->mNormals[i].x;
@@ -247,4 +277,9 @@ GLuint Model::TextureFromFile(const char *path, const string &directory, bool ga
 	}
 
 	return textureID;
+}
+
+BoundingBox Model::GetBoundingBox()
+{
+	return boundingBox;
 }

@@ -33,7 +33,7 @@ public:
 
 
 
-
+	BoundingBox GetBoundingBox() const;
 
 	std::string GetTag();
 	void SetTag(std::string tag_);
@@ -50,6 +50,8 @@ private:
 	glm::vec3 modelRotation;
 	glm::vec3 modelScale;
 
+
+	BoundingBox box;
 
 	BasicLight* light;
 	GLuint lightInstance;

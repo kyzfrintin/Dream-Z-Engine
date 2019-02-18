@@ -3,12 +3,14 @@
 
 
 
-GameObject::GameObject(Model* model_) : modelPosition(glm::vec3()), modelAngle(0.0f), modelRotation(glm::vec3(0.0f, 1.0f, 0.0f)), modelScale(glm::vec3(1.0f)), tag(""), hit(false)
+GameObject::GameObject(Model* model_) : model(model_),modelPosition(glm::vec3()), modelAngle(0.0f), modelRotation(glm::vec3(0.0f, 1.0f, 0.0f)), modelScale(glm::vec3(1.0f)), tag(""), hit(false)
 {
 	model = model_;
 	if (model)
 	{
 		modelInstance = model->CreateInstance(modelPosition, modelAngle, modelRotation, modelScale);
+		box = model->GetBoundingBox();
+		box.transform = model->GetTransform(modelInstance);
 	}
 
 }
@@ -21,7 +23,9 @@ GameObject::GameObject(Model* model_, glm::vec3 position_) : modelPosition(glm::
 	modelPosition = position_;
 	if (model)
 	{
-		//	modelInstance = model->CreateModelInstance(modelPosition, modelAngle, modelRotation, modelScale);
+		modelInstance = model->CreateInstance(modelPosition, modelAngle, modelRotation, modelScale);
+		box = model->GetBoundingBox();
+		box.transform = model->GetTransform(modelInstance);
 	}
 
 }
@@ -33,7 +37,8 @@ GameObject::GameObject(BasicLight* light_) : lightPosition(glm::vec3()), lightAn
 	if (light)
 	{
 		lightInstance = light->CreateBasicLightInstance(lightPosition, lightAngle, lightRotation, lightScale);
-
+	//	box = model->GetBoundingBox();
+		//box.transform = light->GetTransform(modelInstance);
 	}
 	//LightingManager::GetInstance()->AddLight(light_->tag,lightstruct_);
 
@@ -60,6 +65,7 @@ void GameObject::SetPosition(glm::vec3 position_)
 	if (model)
 	{
 		model->UpdateInstance(modelInstance, modelPosition, modelAngle, modelRotation, modelScale);
+		box.transform = model->GetTransform(modelInstance);
 	}
 	lightPosition = position_;
 	if (light)
@@ -75,6 +81,7 @@ void GameObject::SetAngle(float angle_)
 	if (model)
 	{
 		model->UpdateInstance(modelInstance, modelPosition, modelAngle, modelRotation, modelScale);
+		box.transform = model->GetTransform(modelInstance);
 	}
 	lightAngle = angle_;
 	if (light)
@@ -89,6 +96,7 @@ void GameObject::SetRotation(glm::vec3 rotation_)
 	if (model)
 	{
 		model->UpdateInstance(modelInstance, modelPosition, modelAngle, modelRotation, modelScale);
+		box.transform = model->GetTransform(modelInstance);
 	}
 
 	lightRotation = rotation_;
@@ -104,6 +112,9 @@ void GameObject::SetScale(glm::vec3 scale_)
 	if (model)
 	{
 		model->UpdateInstance(modelInstance, modelPosition, modelAngle, modelRotation, modelScale);
+		box.transform = model->GetTransform(modelInstance);
+		box.minVert *= (modelScale);
+		box.maxVert *= (modelScale);
 	}
 
 	lightScale = scale_;
@@ -182,3 +193,7 @@ void GameObject::SetTag(std::string tag_)
 	tag = tag_;
 }
 
+BoundingBox GameObject::GetBoundingBox() const {
+
+	return box;
+}

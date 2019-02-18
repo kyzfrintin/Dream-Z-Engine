@@ -53,13 +53,16 @@ bool Game1::Initialize()
 
 	//AudioHandler::GetInstance()->AddAudio("song","pop.wav", AudioEnum::MUSIC);
 
-	AudioLoader::GetInstance()->PlayMusic("UpbeatFunk.WAV");
+	//AudioLoader::GetInstance()->PlayMusic("UpbeatFunk.WAV");
 
 	SceneGraph::GetInstance()->AddModel(model);
 	SceneGraph::GetInstance()->AddGameObject(new GameObject(model), "test3");
-	//SceneGraph::GetInstance()->GetGameObject("test3")->SetPosition(glm::vec3(0.0f, -1.75f, 0.0f));
+	SceneGraph::GetInstance()->GetGameObject("test3")->SetPosition(glm::vec3(10.0f, -1.75f, 0.0f));
 	SceneGraph::GetInstance()->GetGameObject("test3")->SetScale(glm::vec3(1.0f));
 
+	std::cout << "Object 2 bounding box: " << std::endl;
+	std::cout << "\tMin Vert: " << glm::to_string(SceneGraph::GetInstance()->GetGameObject("test3")->GetBoundingBox().transform) << std::endl;
+	//std::cout << "\tMax Vert: " << glm::to_string(SceneGraph::GetInstance()->GetGameObject("test3")->GetBoundingBox().maxVert) << std::endl;
 
 	return true;
 }
