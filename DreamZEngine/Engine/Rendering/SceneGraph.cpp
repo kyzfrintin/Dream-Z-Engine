@@ -4,6 +4,7 @@
 std::unique_ptr<SceneGraph> SceneGraph::sceneGraphInstance = nullptr;
 
 std::map<Shader*, std::vector<BasicLight*>> SceneGraph::sceneLights = std::map<Shader*, std::vector<BasicLight*>>();
+std::map<Shader*, std::vector<Cube*>> SceneGraph::sceneColliders = std::map<Shader*, std::vector<Cube*>>();
 std::map<Shader*, std::vector<Model*>> SceneGraph::sceneModels = std::map<Shader*, std::vector<Model*>>();
 std::map<std::string, GameObject*> SceneGraph::sceneGameObjects = std::map<std::string, GameObject*>();
 std::map<CAMTYPE, Camera*> SceneGraph::sceneCameras = std::map<CAMTYPE, Camera*>();
@@ -82,6 +83,20 @@ void SceneGraph::AddLight(BasicLight* light_, std::string name_, LightStruct* li
 		lightstruct_->lightTag_ = name_;
 		sceneLights[light_->GetShader()].push_back(light_);
 		LightingManager::GetInstance()->CreateLight(name_, lightstruct_);
+	}
+
+}
+void SceneGraph::AddCollider(Cube* cube_)
+{
+
+
+	if (sceneColliders.find(cube_->GetShader()) == sceneColliders.end())
+	{
+		sceneColliders.insert(std::pair < Shader*, std::vector<Cube*>>(cube_->GetShader(), std::vector<Cube*>{cube_}));
+	}
+	else
+	{
+		sceneColliders[cube_->GetShader()].push_back(cube_);
 	}
 
 }
@@ -186,8 +201,16 @@ void SceneGraph::Render()
 			m->Render();
 		}
 	}
+	for (auto entry : sceneColliders)
+	{
+		entry.first->use();
+		for (auto m : entry.second)
+		{
+			m->Render();
+		}
+	}
 	skybox->Render();
-	terrain->Render();
+	//terrain->Render();
 
 
 	glBindVertexArray(0);

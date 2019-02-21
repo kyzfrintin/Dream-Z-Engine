@@ -148,7 +148,7 @@ void BasicLight::Render()
 		model = glm::translate(model, LightingManager::GetInstance()->GetLights()[i]->position);
 		model = glm::scale(model, glm::vec3(0.2f)); // Make it a smaller cube
 		ourShader->setMat4("model", model);
-
+		glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 		glDrawArrays(GL_TRIANGLES, 0, 36);
 
 	}

@@ -6,13 +6,14 @@
 #include "../../FX/BasicLight.h"
 #include "SkyBox.h"
 #include "Terrain.h"
-
+#include "Cube.h"
 
 class GameObject
 {
 public:
 	GameObject(Model* model_);
 	GameObject(BasicLight* light_);
+	GameObject(Cube* cube_);
 	GameObject(Model* model_, glm::vec3 position_);
 	~GameObject();
 
@@ -52,13 +53,20 @@ private:
 
 
 	BoundingBox box;
-
+	Cube* collider;
 	BasicLight* light;
 	GLuint lightInstance;
 	glm::vec3 lightPosition;
 	float lightAngle;
 	glm::vec3 lightRotation;
 	glm::vec3 lightScale;
+
+
+	GLuint colliderInstance;
+	glm::vec3 colliderPosition;
+	float colliderAngle;
+	glm::vec3 colliderRotation;
+	glm::vec3 colliderScale;
 
 //	std::vector<LightStruct*> lights;
 	std::string tag;

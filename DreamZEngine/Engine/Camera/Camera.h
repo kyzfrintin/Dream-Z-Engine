@@ -44,6 +44,8 @@ public:
 	// Euler Angles
 	float Yaw;
 	float Pitch;
+	GLfloat nearPlane;
+	GLfloat farPlane;
 	// Camera options
 	float MovementSpeed;
 	float MouseSensitivity;
@@ -51,9 +53,10 @@ public:
 	float lastX = 800 / 2.0f;
 	float lastY = 600 / 2.0f;
 	bool firstMouse = true;
+
 	// Constructor with vectors
 
-
+	glm::vec2 GetClippingPlanes() const;
 	// Returns the view matrix calculated using Euler Angles and the LookAt Matrix
 	glm::mat4 GetViewMatrix();
 	// Processes input received from any keyboard-like input system. Accepts input parameter in the form of camera defined ENUM (to abstract it from windowing systems)

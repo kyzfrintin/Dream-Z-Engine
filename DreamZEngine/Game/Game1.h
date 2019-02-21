@@ -9,6 +9,7 @@
 #include "../Engine/Rendering/3D/Terrain.h"
 #include "../Engine/Rendering/3D/SkyBox.h"
 #include "../Engine/FX/BasicLight.h"
+#include "../Engine/Rendering/3D/Cube.h"
 
 class Game1 : public GameInterface
 {
@@ -24,11 +25,12 @@ public:
 	SkyBox* skybox;
 	Terrain* terrain;
 	Model* model;
+	Model* model2;
 	BasicLight* lamp;
 	BasicLight* lamp2;
 	BasicLight* lamp3;
 	// camera
-
+	Cube* cb;
 
 private:
 

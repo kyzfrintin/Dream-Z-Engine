@@ -75,6 +75,7 @@ void  Mesh::Render(Shader* shader, std::vector<glm::mat4> instances_)
 	{
 		shader->setMat4("model", instances_[i]);
 
+		//glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 		glDrawElements(GL_TRIANGLES, indices.size(), GL_UNSIGNED_INT, 0);
 		glBindVertexArray(0);
 

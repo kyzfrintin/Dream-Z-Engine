@@ -11,6 +11,7 @@ GameObject::GameObject(Model* model_) : model(model_),modelPosition(glm::vec3())
 		modelInstance = model->CreateInstance(modelPosition, modelAngle, modelRotation, modelScale);
 		box = model->GetBoundingBox();
 		box.transform = model->GetTransform(modelInstance);
+		
 	}
 
 }
@@ -26,6 +27,7 @@ GameObject::GameObject(Model* model_, glm::vec3 position_) : modelPosition(glm::
 		modelInstance = model->CreateInstance(modelPosition, modelAngle, modelRotation, modelScale);
 		box = model->GetBoundingBox();
 		box.transform = model->GetTransform(modelInstance);
+
 	}
 
 }
@@ -44,6 +46,18 @@ GameObject::GameObject(BasicLight* light_) : lightPosition(glm::vec3()), lightAn
 
 }
 
+GameObject::GameObject(Cube* cube_) : colliderPosition(glm::vec3()), colliderAngle(0.0f), colliderRotation(glm::vec3(0.0f, 1.0f, 0.0f)), colliderScale(glm::vec3(1.0f)), tag(""), hit(false)
+{
+	collider = cube_;
+	if (collider)
+	{
+		colliderInstance = collider->CreateCubeInstance(colliderPosition, colliderAngle, colliderRotation, colliderScale);
+		//	box = model->GetBoundingBox();
+			//box.transform = collider->GetTransform(modelInstance);
+	}
+	//collideringManager::GetInstance()->Addcollider(collider_->tag,colliderstruct_);
+
+}
 GameObject::~GameObject()
 {
 	if (model)
@@ -73,6 +87,12 @@ void GameObject::SetPosition(glm::vec3 position_)
 		//light->UpdateInstance(lightInstance, lightPosition, lightAngle, lightRotation, lightScale);
 		LightingManager::GetInstance()->UpdateLightPosition(this->GetTag(), position_);
 	}
+	colliderPosition = position_;
+	if (collider)
+	{
+		//light->UpdateInstance(lightInstance, lightPosition, lightAngle, lightRotation, lightScale);
+		collider->UpdateInstance(colliderInstance, colliderPosition, colliderAngle, colliderRotation, colliderScale);
+	}
 
 }
 void GameObject::SetAngle(float angle_)
@@ -87,6 +107,11 @@ void GameObject::SetAngle(float angle_)
 	if (light)
 	{
 		light->UpdateInstance(lightInstance, lightPosition, lightAngle, lightRotation, lightScale);
+	}
+	colliderAngle = angle_;
+	if (collider)
+	{
+		collider->UpdateInstance(colliderInstance, colliderPosition, colliderAngle, colliderRotation, colliderScale);
 	}
 }
 
@@ -103,6 +128,11 @@ void GameObject::SetRotation(glm::vec3 rotation_)
 	if (light)
 	{
 		light->UpdateInstance(lightInstance, lightPosition, lightAngle, lightRotation, lightScale);
+	}
+	colliderRotation = rotation_;
+	if (collider)
+	{
+		collider->UpdateInstance(colliderInstance, colliderPosition, colliderAngle, colliderRotation, colliderScale);
 	}
 }
 
@@ -122,7 +152,11 @@ void GameObject::SetScale(glm::vec3 scale_)
 	{
 		light->UpdateInstance(lightInstance, lightPosition, lightAngle, lightRotation, lightScale);
 	}
-
+	colliderScale = scale_;
+	if (collider)
+	{
+		collider->UpdateInstance(colliderInstance, colliderPosition, colliderAngle, colliderRotation, colliderScale);
+	}
 }
 
 void GameObject::SetHit(bool hit_, int buttonType_) {
@@ -142,6 +176,10 @@ glm::vec3 GameObject::GetPosition() const
 	{
 		return LightingManager::GetInstance()->GetLightValueForUpdating(this->tag)->position;
 	}
+	if (collider)
+	{
+		return colliderPosition;
+	}
 	return glm::vec3(0);
 }
 float GameObject::GetAngle()
@@ -153,6 +191,10 @@ float GameObject::GetAngle()
 	if (light)
 	{
 		return lightAngle;
+	}
+	if (collider)
+	{
+		return colliderAngle;
 	}
 	return 0.0f;
 }
@@ -166,6 +208,10 @@ glm::vec3 GameObject::GetRotation() const
 	{
 		return lightRotation;
 	}
+	if (collider)
+	{
+		return colliderRotation;
+	}
 	return glm::vec3(0);
 }
 glm::vec3 GameObject::GetScale() const
@@ -177,6 +223,10 @@ glm::vec3 GameObject::GetScale() const
 	if (light)
 	{
 		return lightScale;
+	}
+	if (collider)
+	{
+		return colliderScale;
 	}
 	return glm::vec3(0);
 }
