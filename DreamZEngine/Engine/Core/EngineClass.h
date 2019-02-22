@@ -8,6 +8,7 @@
 #include "../Camera/Camera.h"
 #include "../Audio/AudioHandler.h"
 #include "../Audio/AudioLoader.h"
+#include "../Events/EventListener.h"
 #include <memory>
 #include <map>
 #include <vector>

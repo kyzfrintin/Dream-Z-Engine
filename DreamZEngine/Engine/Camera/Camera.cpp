@@ -9,7 +9,7 @@ Camera::Camera(glm::vec3 position, glm::vec3 up, float yaw, float pitch) : Posit
 	//Position = glm::vec3(0.8f, 17.0f, 2.3f);
 	WorldUp = up;
 	Yaw = YAW;
-	Pitch = -90;
+	Pitch = 0;
 	updateCameraVectors();
 }
 // Constructor with scalar values

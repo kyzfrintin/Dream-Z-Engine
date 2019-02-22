@@ -1,6 +1,7 @@
 #ifndef EVENTLISTENER_H
 #define EVENTLISTENER_H
 #include "MouseEventListener.h"
+#include "KeyboardEventListener.h"
 class EventListener
 {
 public:
@@ -8,7 +9,7 @@ public:
 	EventListener(EventListener&&) = delete;
 	EventListener& operator=(const EventListener&) = delete;
 	EventListener& operator=(EventListener&&) = delete;
-	static void Update();
+	static void Update(const float deltaTime);
 
 	
 };

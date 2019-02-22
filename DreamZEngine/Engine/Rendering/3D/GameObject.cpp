@@ -3,7 +3,7 @@
 
 
 
-GameObject::GameObject(Model* model_) : model(model_),modelPosition(glm::vec3()), modelAngle(0.0f), modelRotation(glm::vec3(0.0f, 1.0f, 0.0f)), modelScale(glm::vec3(1.0f)), tag(""), hit(false)
+GameObject::GameObject(Model* model_) : model(model_),modelPosition(glm::vec3(0.0f, 1.0f, 0.0f)), modelAngle(0.0f), modelRotation(glm::vec3(0.0f, 1.0f, 0.0f)), modelScale(glm::vec3(1.0f)), tag(""), hit(false)
 {
 	model = model_;
 	if (model)
@@ -11,7 +11,7 @@ GameObject::GameObject(Model* model_) : model(model_),modelPosition(glm::vec3())
 		modelInstance = model->CreateInstance(modelPosition, modelAngle, modelRotation, modelScale);
 		box = model->GetBoundingBox();
 		box.transform = model->GetTransform(modelInstance);
-		
+		box.CreateVertexBuffer();
 	}
 
 }
@@ -27,7 +27,7 @@ GameObject::GameObject(Model* model_, glm::vec3 position_) : modelPosition(glm::
 		modelInstance = model->CreateInstance(modelPosition, modelAngle, modelRotation, modelScale);
 		box = model->GetBoundingBox();
 		box.transform = model->GetTransform(modelInstance);
-
+		
 	}
 
 }
@@ -46,7 +46,7 @@ GameObject::GameObject(BasicLight* light_) : lightPosition(glm::vec3()), lightAn
 
 }
 
-GameObject::GameObject(Cube* cube_) : colliderPosition(glm::vec3()), colliderAngle(0.0f), colliderRotation(glm::vec3(0.0f, 1.0f, 0.0f)), colliderScale(glm::vec3(1.0f)), tag(""), hit(false)
+GameObject::GameObject(Cube* cube_) : collider(cube_), colliderPosition(glm::vec3(0.0f, 1.0f, 0.0f)), colliderAngle(0.0f), colliderRotation(glm::vec3(0.0f, 1.0f, 0.0f)), colliderScale(glm::vec3(1.0f)), tag(""), hit(false)
 {
 	collider = cube_;
 	if (collider)

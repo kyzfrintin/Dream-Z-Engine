@@ -82,13 +82,13 @@ void MouseEventListener::UpdateMousePosition() {
 		prevMouseX = mouseX = tmpX;
 		prevMouseY = mouseX = tmpY;
 		firstUpdate = false;
-		std::cout << prevMouseX <<std::endl;
+		//std::cout << prevMouseX <<std::endl;
 	}
 	else if (tmpX != mouseX && tmpY != mouseY) {
 		prevMouseX = mouseX;
 		prevMouseY = mouseY;
 		mouseX = tmpX;
 		mouseY = tmpY;
-		std::cout << prevMouseX <<"-" << prevMouseY <<std::endl;
+		//std::cout << prevMouseX <<"-" << prevMouseY <<std::endl;
 	}
 }

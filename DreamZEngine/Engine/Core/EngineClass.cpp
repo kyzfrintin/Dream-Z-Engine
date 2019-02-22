@@ -32,7 +32,7 @@ bool EngineClass::Initialize(std::string name_, int width_, int height_) {
 	SDL_WarpMouseInWindow(window->GetWindow(), window->GetWidth() / 2, window->GetHeight() / 2);
 
 	
-	
+	MouseEventListener::RegisterEngineObject(this);
 
 	if (gameInterface) {
 		if (!gameInterface->Initialize()) {
@@ -50,7 +50,7 @@ bool EngineClass::Initialize(std::string name_, int width_, int height_) {
 void EngineClass::Run() {
 
 	while (isRunning) {
-		
+		EventListener::Update(timer.GetDeltaTime());
 		timer.UpdateFrameTicks();
 		Update(timer.GetDeltaTime());
 		Render();
@@ -68,6 +68,7 @@ void EngineClass::Update(const float deltaTime) {
 	if (gameInterface) {
 		gameInterface->Update(deltaTime);
 	}
+	
 }
 
 void EngineClass::Render() {

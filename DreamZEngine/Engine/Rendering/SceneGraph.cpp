@@ -201,13 +201,10 @@ void SceneGraph::Render()
 			m->Render();
 		}
 	}
-	for (auto entry : sceneColliders)
+	for (auto entry : sceneGameObjects)
 	{
-		entry.first->use();
-		for (auto m : entry.second)
-		{
-			m->Render();
-		}
+		entry.second->GetBoundingBox().Render();
+		
 	}
 	skybox->Render();
 	//terrain->Render();
