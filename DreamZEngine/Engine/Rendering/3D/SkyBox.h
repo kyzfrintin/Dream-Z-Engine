@@ -1,33 +1,34 @@
+#pragma once
 #ifndef SKYBOX_H
 #define SKYBOX_H
 
-#include "Model.h"
-
-using namespace std;
-class SkyBox
-{
-public:
-	SkyBox();
-	//SkyBox(Shader * shaderProgram_, std::string tag_);
-	~SkyBox();
-	void CreateVertexBuffers();
-	void Render();
-
-	unsigned int loadTexture(char const * path);
-
-	unsigned int loadCubemap(vector<std::string> faces);
-
-	Shader* shader = new Shader("Engine/Shaders/cubemap.vs", "Engine/Shaders/cubemap.fs");
-	Shader* skyboxShader = new Shader("Engine/Shaders/skybox.vs", "Engine/Shaders/skybox.fs");
-	unsigned int skyboxVAO, skyboxVBO, cubeVAO, cubeVBO, cubeTexture, cubemapTexture;
-	Shader* ourShader;
-};
+#include "GameObject.h"
+#include <glew.h>
+#include <SDL_image.h>
+#include <vector>
+#include <iostream>
 
 
 
+	class Skybox : public GameObject
+	{
+	public:
+		Skybox();
+		~Skybox();
+
+		// Load the faces of the cubes by giving a vector of file paths
+		void LoadTextures(std::vector<std::string> faces);
+
+		void Update(const float deltaTime);
+		void Render();
+
+	private:
+		void LoadMesh();
+
+		unsigned int VAO, VBO, textureID;
+		std::vector<char*> faces;
+	};
 
 
-
-
-#endif // !SKYBOX_H
+#endif
 

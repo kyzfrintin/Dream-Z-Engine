@@ -1,91 +1,139 @@
 #include "Window.h"
-Window::Window() :window(nullptr)
+
+
+
+Window::Window() : SDLWindow(nullptr)
 {
+
 }
 
 Window::~Window()
 {
 	Shutdown();
 }
-bool Window::Initialize(std::string name_, int width_, int height_)
+
+bool Window::Initialize(std::string windowName, int initWidth, int initHeight)
 {
-	if (SDL_Init(SDL_INIT_VIDEO | SDL_INIT_AUDIO) < 0)
-	{
-		//std::cout << "Failed to Initialize SDL" << std::endl;
-		Debug::FatalError("Failed to Initialize SDL",__FILE__,__LINE__);
+	// Initialize SDL
+	if (SDL_Init(SDL_INIT_VIDEO | SDL_INIT_JOYSTICK | SDL_INIT_AUDIO | SDL_INIT_HAPTIC) > 0) {
+		std::cout << "Failed to init SDL!" << std::endl;
 		return false;
 	}
-	width = width_;
-	height = height_;
-	window = SDL_CreateWindow(name_.c_str(),
-		SDL_WINDOWPOS_CENTERED,
-		SDL_WINDOWPOS_CENTERED,
-		width,
-		height,
-		SDL_WINDOW_OPENGL);
+	std::cout << "SDL Initialized" << std::endl;
 
-	if (!window)
-	{
-		//std::cout << "Failed to Create Window" << std::endl;
-		Debug::FatalError("Failed to Create Window", __FILE__, __LINE__);
+	width = initWidth;
+	height = initHeight;
+
+	// Create Window
+	SDLWindow = SDL_CreateWindow(windowName.c_str(), SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, initWidth, initHeight, SDL_WINDOW_OPENGL | SDL_WINDOW_HIDDEN);
+
+	// V-Sync
+	SDL_GL_SetSwapInterval(1);
+
+	// Check to make sure the window was created properly
+	if (!SDLWindow) {
+		std::cout << "Unable to create Window" << std::endl;
+		Shutdown();
 		return false;
 	}
 
-	context = SDL_GL_CreateContext(window);
+	// Create an SDL/GL context=
+	SDLGLContext = SDL_GL_CreateContext(SDLWindow);
+
+	// Set the Attributes that will be used within the window
 	SetAttributes();
 
+	//Initialize glew and get the error message from the initialize function
 	GLenum err = glewInit();
-	if (err != GLEW_OK)
-	{
-		//std::cout << "Glew Initialization Failed" << std::endl;
-		Debug::FatalError("Glew Initialization Failed", __FILE__, __LINE__);
+	if (err != GLEW_OK) {
+		std::cout << "glewInit failed, aborting." << std::endl;
+		std::cout << "Error: " << glewGetErrorString(err) << std::endl;
 		return false;
 	}
+	std::cout << "GLEW Initialized" << std::endl;
 
-	glEnable(GL_DEPTH_TEST);
+	// Print OpenGl Information
+	GetInstalledOpenGLInfo();
 
-	glViewport(0, 0, width, height);
+	// Initialize Audio
+	if (Mix_OpenAudio(44100, MIX_DEFAULT_FORMAT, 2, 512) == -1)
 
-	std::cout << "OpenGL Version:" << glGetString(GL_VERSION) << std::endl;
-	Debug::Info("OpenGL Version:" + std::string((char*)glGetString(GL_VERSION)), __FILE__, __LINE__);
+
+	{
+		std::cout << "Audio was not initialized" << std::endl;
+		return false;
+	}
+	std::cout << "Audio initialized" << std::endl;
+
 	return true;
 }
 
 void Window::Shutdown()
 {
-	SDL_GL_DeleteContext(context);
-	SDL_DestroyWindow(window);
-	window = nullptr;
-}
-
-int Window::GetHeight()
-{
-	return height;
-}
-int Window::GetWidth() 
-{
-	return width;
-}
-
-SDL_Window* Window::GetWindow() const 
-{
-	return window;
+	//Clean up the window
+	Mix_CloseAudio();
+	Mix_Quit();
+	SDL_GL_DeleteContext(SDLGLContext);
+	SDL_DestroyWindow(SDLWindow);
+	SDLWindow = nullptr;
 }
 
 void Window::SetAttributes()
 {
-	SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK,
-		SDL_GL_CONTEXT_PROFILE_CORE);
-	SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION,
-		3);
-	SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION,
-		3);
-	SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER,
-		1);
-	SDL_GL_SetAttribute(SDL_GL_DEPTH_SIZE,
-		32);
-	SDL_GL_SetSwapInterval(1);
-	glewExperimental = GL_TRUE;
+	//Ignore any depricated functions
+	SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_CORE);
 
+	//Set up the version of OpenGL that will be used (3.3 covers MOST computers)
+	SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 3);
+	SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 3);
+	//Creates a double buffer within the game
+	//This allows one surface to render in the background
+	//The buffers then swap when the back on is filled,
+	//and the process repeats
+	SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, 1);
+	//This sets up the depth buffer
+	//This will help the GPU determine which objects are in front of others (perspective)
+	SDL_GL_SetAttribute(SDL_GL_DEPTH_SIZE, 32);
+	// This is used for anti-aliasing
+	//SDL_GL_SetAttribute(SDL_GL_MULTISAMPLEBUFFERS, 1);
+	SDL_GL_SetAttribute(SDL_GL_MULTISAMPLESAMPLES, 4);
 }
 
+SDL_Window* Window::GetWindow() const {
+	return SDLWindow;
+}
+
+int Window::GetWidth() const {
+	return width;
+}
+
+int Window::GetHeight() const {
+	return height;
+}
+
+void Window::SetWindowSize(const int setWidth, const int setHeight)
+{
+	width = setWidth;
+	height = setHeight;
+}
+
+void Window::SetFullScreen(bool setFullscreen)
+{
+	isFullScreen = setFullscreen;
+	SDL_SetWindowFullscreen(SDLWindow, (isFullScreen ? SDL_WINDOW_FULLSCREEN_DESKTOP : SDL_WINDOW_SHOWN));
+}
+
+void Window::GetInstalledOpenGLInfo()
+{
+	// You can to get some info regarding versions and manufacturer
+	const GLubyte *version = glGetString(GL_VERSION);
+	// You can also get the version as ints	
+	const GLubyte *vendor = glGetString(GL_VENDOR);
+	const GLubyte *renderer = glGetString(GL_RENDERER);
+	const GLubyte *glslVersion = glGetString(GL_SHADING_LANGUAGE_VERSION);
+
+	std::cout << "GL Version " << version << std::endl;
+	std::cout << "Graphics card vendor " << vendor << std::endl;
+	std::cout << "Graphics card name " << renderer << std::endl;
+	std::cout << "GLSL Version " << glslVersion << std::endl;
+}

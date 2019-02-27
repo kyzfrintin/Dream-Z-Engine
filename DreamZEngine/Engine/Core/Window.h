@@ -1,47 +1,53 @@
+#pragma once
 #ifndef WINDOW_H
 #define WINDOW_H
 
-
-#include <SDL.h>
 #include <glew.h>
+#include <SDL.h>
 #include <SDL_opengl.h>
-#include <stdio.h>
-#include <string>
+#include <SDL_mixer.h>
 #include <iostream>
-#include"Debug.h"
 
-
+//Set up the GL3_Prototypes
 #define GL3_PROTOTYPES 1
 
-class Window
-{
-public:
-	Window(const Window&) = delete;
-	Window(Window&&) = delete;
-	Window& operator=(const Window&) = delete;
-	Window& operator=(Window&&) = delete;
-
-	Window();
-	~Window();
-
-	bool Initialize(std::string name_, int width_, int height_);
-	void Shutdown();
-	int GetHeight();
-	int GetWidth();
-	SDL_Window* GetWindow() const;
 
 
-private:
+	class Window
+	{
+	public:
+		// Constructor
+		Window();
+		~Window();
 
-	void SetAttributes();
-	int width;
-	int height;
-	SDL_Window* window;
-	SDL_GLContext context;
-};
+		// Initailize window
+		bool Initialize(std::string windowName, int initWidth, int initHeight);
+		// Clean Up
+		void Shutdown();
+
+		// Getters and Setters
+		SDL_Window* GetWindow() const;
+		int GetWidth() const;
+		int GetHeight() const;
+		void SetWindowSize(const int setWidth, const int setHeight);
+		void SetFullScreen(bool setFullscreen);
+
+		// Will print opengl information
+		void GetInstalledOpenGLInfo();
+
+	private:
+		// This will set all the openGL attributes for the window
+		void SetAttributes();
+
+		// SDL window and context
+		SDL_Window* SDLWindow;
+		SDL_GLContext SDLGLContext;
+
+		// Window properties
+		int width;
+		int height;
+		bool isFullScreen = false;
+	};
 
 
-
-#endif // ! WINDOW_H
-
-
+#endif

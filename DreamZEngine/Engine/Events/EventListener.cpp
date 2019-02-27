@@ -8,7 +8,7 @@
 void EventListener::Update(const float deltaTime)
 {
 	SDL_Event SDLEvent;
-	while (SDL_PollEvent(&SDLEvent))
+	/*while (SDL_PollEvent(&SDLEvent))
 	{
 		switch (SDLEvent.type)
 		{
@@ -29,5 +29,5 @@ void EventListener::Update(const float deltaTime)
 		default:
 			break;
 		}
-	}
+	}*/
 }

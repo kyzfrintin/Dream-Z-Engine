@@ -1,3 +1,3 @@
 ﻿D:\Program Files (x86)\Microsoft Visual Studio\2017\Community\Common7\IDE\VC\VCTargets\Microsoft.CppBuild.targets(391,5): warning MSB8028: The intermediate directory (Debug\) contains files shared from another project (ClassEngine.vcxproj).  This can lead to incorrect clean and rebuild behavior.
   Game1.cpp
-  ClassEngine.vcxproj -> D:\Users\Alton\Documents\GitHub\Dream-Z-Engine\Debug\DreamZEngine.exe
+  ClassEngine.vcxproj -> C:\Users\Alton\Desktop\Dream-Z-Engine\Debug\DreamZEngine.exe

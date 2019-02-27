@@ -1,129 +1,150 @@
 #include "Mesh.h"
 
-#include "../../FX/LightingManager.h"
 
-Mesh::Mesh(vector<Vertex> vertices, vector<GLuint> indices, vector<Texture> textures)
-{
-	this->vertices = vertices;
-	this->indices = indices;
-	this->textures = textures;
 
-	// now that we have all the required data, set the vertex buffers and its attribute pointers.
-	setupMesh();
+Mesh::Mesh(std::vector<Vertex>* vertList_)
+	: VBO(0), VAO(0), vertexList(std::vector<Vertex>()) {
+
+	vertexList = *vertList_;
+
+	GenerateBuffers();
+	LoadTexture("Resources/Textures/default_texture.png", 0);
 }
 
-
-
-
-void  Mesh::Render(Shader* shader, std::vector<glm::mat4> instances_)
-{
-	// bind appropriate textures
-	unsigned int diffuseNr = 1;
-	unsigned int specularNr = 1;
-	unsigned int normalNr = 1;
-	unsigned int heightNr = 1;
-	for (unsigned int i = 0; i < textures.size(); i++)
-	{
-		glActiveTexture(GL_TEXTURE0 + i); // active proper texture unit before binding
-		// retrieve texture number (the N in diffuse_textureN)
-		string number;
-		string name = textures[i].type;
-		if (name == "texture_diffuse")
-			number = std::to_string(diffuseNr++);
-		else if (name == "texture_specular")
-			number = std::to_string(specularNr++); // transfer unsigned int to stream
-		else if (name == "texture_normal")
-			number = std::to_string(normalNr++); // transfer unsigned int to stream
-		else if (name == "texture_height")
-			number = std::to_string(heightNr++); // transfer unsigned int to stream
-
-												 // now set the sampler to the correct texture unit
-		glUniform1i(glGetUniformLocation(shader->ID, (name + number).c_str()), i);
-		// and finally bind the texture
-		glBindTexture(GL_TEXTURE_2D, textures[i].id);
-	}
-
-
-	// draw mesh
-	glBindVertexArray(VAO);
-
-	if (LightingManager::GetInstance()->GetLights().size() != 0)
-	{
-		for (int i = 0; i < LightingManager::GetInstance()->GetLights().size(); i++)
-		{
-			const string position = "lights[" + std::to_string(i) + "].position";
-			const string ambient = "pointLights[" + std::to_string(i) + "].ambient";
-			const string diffuse = "pointLights[" + std::to_string(i) + "].diffuse";
-			const string specular = "pointLights[" + std::to_string(i) + "].specular";
-
-			shader->setVec3(position, LightingManager::GetInstance()->GetLights()[i]->position);
-			shader->setVec3(ambient, LightingManager::GetInstance()->GetLights()[i]->ambient);
-			shader->setVec3(diffuse, LightingManager::GetInstance()->GetLights()[i]->diffuse);
-			shader->setVec3(specular, LightingManager::GetInstance()->GetLights()[i]->specular);
-
-
-		}
-	}
-	else {
-		shader->setInt("lightsizes", 0);
-		//glDrawArrays(GL_TRIANGLES, 0, 6);
-	}
-	glm::mat4 model = glm::mat4(1.0f);
-	model = glm::translate(model, glm::vec3(0.0f, -1.75f, 0.0f)); // translate it down so it's at the center of the scene
-	model = glm::scale(model, glm::vec3(0.2f, 0.2f, 0.2f));	// it's a bit too big for our scene, so scale it down
-	for (int i = 0; i < instances_.size(); i++)
-	{
-		shader->setMat4("model", instances_[i]);
-
-		//glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
-		glDrawElements(GL_TRIANGLES, indices.size(), GL_UNSIGNED_INT, 0);
-		glBindVertexArray(0);
-
-		// always good practice to set everything back to defaults once configured.
-		glActiveTexture(GL_TEXTURE0);
-	}
-
-
-
+Mesh::~Mesh() {
+	//Delete the VAO & VBO from the GPU and clear their data
+	glDeleteVertexArrays(1, &VAO);
+	glDeleteBuffers(1, &VBO);
 }
 
+void Mesh::GenerateBuffers() {
 
-/*  Functions    */
-// initializes all the buffer objects/arrays
-void Mesh::setupMesh()
-{
-	// create buffers/arrays
+	//Generate the VAO & VBO
+	//Pass in the VAO & VBO variable as a pointer to be filled by the GPU
 	glGenVertexArrays(1, &VAO);
 	glGenBuffers(1, &VBO);
-	glGenBuffers(1, &EBO);
 
+	//Bind the VAO and VBO to the GPU to activate them for use
 	glBindVertexArray(VAO);
-	// load data into vertex buffers
 	glBindBuffer(GL_ARRAY_BUFFER, VBO);
-	// A great thing about structs is that their memory layout is sequential for all its items.
-	// The effect is that we can simply pass a pointer to the struct and it translates perfectly to a glm::vec3/2 array which
-	// again translates to 3/2 floats which translates to a byte array.
-	glBufferData(GL_ARRAY_BUFFER, vertices.size() * sizeof(Vertex), &vertices[0], GL_STATIC_DRAW);
 
-	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
-	glBufferData(GL_ELEMENT_ARRAY_BUFFER, indices.size() * sizeof(GLuint), &indices[0], GL_STATIC_DRAW);
+	//Fill the VBO that you activated above with your vertex data
+	//(type of Buffer, size of array, pointer to the first item in array, type of draw call)
+	glBufferData(GL_ARRAY_BUFFER, vertexList.size() * sizeof(Vertex), &vertexList[0], GL_STATIC_DRAW);
 
-	// set the vertex attribute pointers
-	// vertex Positions
+	//Enable a vertex attribute array
+	//This will be where we define that data we are passing to our VBO
 	glEnableVertexAttribArray(0);
-	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)0);
-	// vertex normals
-	glEnableVertexAttribArray(1);
-	glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)offsetof(Vertex, Normal));
-	// vertex texture coords
-	glEnableVertexAttribArray(2);
-	glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)offsetof(Vertex, TexCoords));
-	// vertex tangent
-	glEnableVertexAttribArray(3);
-	glVertexAttribPointer(3, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)offsetof(Vertex, Tangent));
-	// vertex bitangent
-	glEnableVertexAttribArray(4);
-	glVertexAttribPointer(4, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)offsetof(Vertex, Bitangent));
 
+	//Assign thd data to the specific attribute pointer you just made
+	//(attribute pointer, number of variables, type of variable, 
+	//is it normalized?, size of step to next vert, pointer to the spot in the Vertex this data is stored)
+	//POSITION
+	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (GLvoid*)0);
+
+	//The offset specifies where in our structure these specific variables are located
+	//NORMAL
+	glEnableVertexAttribArray(1);
+	glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (GLvoid*)offsetof(Vertex, normal));
+
+
+	//TEX COORDS
+	glEnableVertexAttribArray(2);
+	glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, sizeof(Vertex), (GLvoid*)offsetof(Vertex, textureCoordinates));
+
+
+	//COLOR
+	glEnableVertexAttribArray(5);
+	glVertexAttribPointer(5, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (GLvoid*)offsetof(Vertex, color));
+
+
+	//Clear the vertex array and the buffer so no one else can access it or push to it
 	glBindVertexArray(0);
+	glBindBuffer(GL_ARRAY_BUFFER, 0);
+}
+
+void Mesh::Render(Shader* shader) {
+	shader->Use();
+	shader->setInt("texture_diffuse1", 0);
+	shader->setInt("texture_specular1", 0);
+	glBindTexture(GL_TEXTURE_2D, textureID);
+
+	//Bind the VAO that you want to use for drawing
+	glBindVertexArray(VAO);
+
+	//Draw the array stored in the bound VAO
+	//(type of render, start of array, end of array)
+	glDrawArrays(GL_TRIANGLES, 0, vertexList.size());
+
+	//Clear the vertex array for future use
+	glBindVertexArray(0);
+	glBindTexture(GL_TEXTURE_2D, 0);
+}
+
+void Mesh::RenderPoints(Shader* shader) {
+	shader->Use();
+	shader->setInt("texture_diffuse1", 0);
+	shader->setInt("texture_specular1", 0);
+	glBindTexture(GL_TEXTURE_2D, textureID);
+
+	//Bind the VAO that you want to use for drawing
+	glBindVertexArray(VAO);
+
+	//Draw the array stored in the bound VAO
+	//(type of render, start of array, end of array)
+	glDrawArrays(GL_POINTS, 0, vertexList.size());
+
+	//Clear the vertex array for future use
+	glBindVertexArray(0);
+	glBindTexture(GL_TEXTURE_2D, 0);
+}
+
+void Mesh::LoadTexture(const char* path, int id) {
+	/// Bind the first one
+	glBindTexture(GL_TEXTURE_2D, textureID);
+
+	SDL_Surface *textureSurface = IMG_Load(path);
+	if (textureSurface == nullptr) {
+		//return false;
+	}
+	/// Are we using alpha? Not in jpeg but let's be careful
+	int mode = (textureSurface->format->BytesPerPixel == 4) ? GL_RGBA : GL_RGB;
+
+	/// Wrapping and filtering options
+	glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+	glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+	/// Load the texture data from the SDL_Surface to the GPU memmory
+	glTexImage2D(GL_TEXTURE_2D, 0, mode, textureSurface->w, textureSurface->h, 0, mode, GL_UNSIGNED_BYTE, textureSurface->pixels);
+	/// Release the memory
+	SDL_FreeSurface(textureSurface); /// let go of the memory
+}
+
+void Mesh::LoadTextures(std::vector<char*> faces) {
+
+	glGenTextures(1, &textureID);
+	glBindTexture(GL_TEXTURE_CUBE_MAP, textureID);
+
+	for (unsigned int i = 0; i < faces.size(); i++) {
+		SDL_Surface *textureSurface = IMG_Load(faces[i]);
+		if (textureSurface == nullptr) {
+			std::cout << IMG_GetError() << std::endl;
+			//return false;			
+		}
+		/// Are we using alpha? Not in jpeg but let's be careful
+		int mode = (textureSurface->format->BytesPerPixel == 4) ? GL_RGBA : GL_RGB;
+
+		/// Wrapping and filtering options
+		glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+		glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+		glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+		glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+		glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_R, GL_CLAMP_TO_EDGE);
+
+		/// Load the texture data from the SDL_Surface to the GPU memmory
+		glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X + i, 0, mode, textureSurface->w, textureSurface->h, 0, mode, GL_UNSIGNED_BYTE, textureSurface->pixels);
+		/// Release the memory
+		SDL_FreeSurface(textureSurface); /// let go of the memory
+	}
 }

@@ -14,9 +14,18 @@ int main(int argc, char* args[])
 	}*/
 
 	//VERSION 2
-	EngineClass::GetInstance()->SetGameInterface(new Game1());
-	EngineClass::GetInstance()->Initialize("FartBox", 800, 600);
-	EngineClass::GetInstance()->Run();
+	EngineClass::GetInstance()->SetWindowName("DreamZ Engine");
+	EngineClass::GetInstance()->SetWindowDimensions(1280, 720);
+
+	//Start Engine
+	if (EngineClass::GetInstance()->Initialize()) {
+		// Add scenes
+		EngineClass::GetInstance()->GetSceneManager()->AddScene(new Game1);
+		//EngineClass::GetInstance()->GetSceneManager()->AddScene(new MenuSelectScene);
+		EngineClass::GetInstance()->GetSceneManager()->StartScene();
+		//Game Loop
+		EngineClass::GetInstance()->Run();
+	}
 
 	return 0;
 }

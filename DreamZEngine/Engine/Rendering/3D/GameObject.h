@@ -1,80 +1,110 @@
+#pragma once
 #ifndef GAMEOBJECT_H
 #define GAMEOBJECT_H
 
+#include "../../Graphics/Shader.h"
+//#include "ResourceManager.h"
+#include "../../Math/CollisionComponent.h"
+#include "../../Math/PhysicsComponent.h"
+#include <glm/glm.hpp>
+#include <glm/gtc/matrix_transform.hpp>
 
 
-#include "../../FX/BasicLight.h"
-#include "SkyBox.h"
-#include "Terrain.h"
-#include "Cube.h"
+	class GameObject
+	{
+	protected:
+		// Local variables
+		glm::vec3 localPosition;
+		glm::vec3 localRotation;
+		glm::vec3 localScale;
+		float localRotationAngle;
 
-class GameObject
-{
-public:
-	GameObject(Model* model_);
-	GameObject(BasicLight* light_);
-	GameObject(Cube* cube_);
-	GameObject(Model* model_, glm::vec3 position_);
-	~GameObject();
+		// World variables
+		glm::vec3 worldPosition;
+		glm::vec3 worldRotation;
+		glm::vec3 worldScale;
+		float worldRotationAngle;
 
-	void Update(const float deltaTime_);
+		// Model Matrix
+		glm::mat4 localModelMatrix = glm::mat4();
+		glm::mat4 worldModelMatrix = glm::mat4();
+		glm::mat4 previousWorldModelMatrix = glm::mat4();
 
+		// Object Shader
+		Shader* shader;
 
-	void SetPosition(glm::vec3 position_);
-	void SetAngle(float angle_);
-	void SetRotation(glm::vec3 rotation_);
-	void SetScale(glm::vec3 scale_);
+	public:
+		GameObject();
+		virtual ~GameObject();
 
-	float GetAngle();
-	glm::vec3 GetPosition() const;
-	glm::vec3 GetRotation() const;
-	glm::vec3 GetScale() const;
+		// Local getters and setters
+		// position
+		virtual void SetLocalPosition(const float &x, const float &y, const float &z);
+		virtual void SetLocalPosition(const glm::vec3 &p);
+		virtual glm::vec3 GetLocalPosition() const;
+		// rotation
+		virtual void SetLocalRotation(const float &x, const float &y, const float &z, const float &a);
+		virtual void SetLocalRotation(const glm::vec3 &r, const float &a);
+		virtual glm::vec3 GetLocalRotation() const;
+		// scale
+		virtual void SetLocalScale(const float &x, const float &y, const float &z);
+		virtual void SetLocalScale(const glm::vec3 &s);
+		virtual void SetLocalScale(const float &s);
+		virtual glm::vec3 GetLocalScale() const;
+		// angle
+		virtual float GetLocalRotationAngle() const;
 
+		// World getters and setters
+		// position
+		virtual void SetWorldPosition(const float &x, const float &y, const float &z);
+		virtual void SetWorldPosition(const glm::vec3 &p);
+		virtual glm::vec3 GetWorldPosition() const;
+		// rotation
+		virtual void SetWorldRotation(const float &x, const float &y, const float &z, const float &a);
+		virtual void SetWorldRotation(const glm::vec3 &r, const float &a);
+		virtual glm::vec3 GetWorldRotation() const;
+		// scale
+		virtual void SetWorldScale(const float &x, const float &y, const float &z);
+		virtual void SetWorldScale(const glm::vec3 &s);
+		virtual void SetWorldScale(const float &s);
+		virtual glm::vec3 GetWorldScale() const;
+		// angle
+		virtual float GetWorldRotationAngle() const;
 
+		// Update Local Model Matrix
+		virtual void UpdateLocalMatrix();
+		virtual glm::mat4 GetLocalModelMatrix() const;
 
-
-
-	BoundingBox GetBoundingBox() const;
-
-	std::string GetTag();
-	void SetTag(std::string tag_);
-	void SetHit(bool hit_, int buttonType_);
-
-
-
-private:
-
-	Model* model;
-	GLuint modelInstance;
-	glm::vec3 modelPosition;
-	float modelAngle;
-	glm::vec3 modelRotation;
-	glm::vec3 modelScale;
-
-
-	BoundingBox box;
-	Cube* collider;
-	BasicLight* light;
-	GLuint lightInstance;
-	glm::vec3 lightPosition;
-	float lightAngle;
-	glm::vec3 lightRotation;
-	glm::vec3 lightScale;
-
-
-	GLuint colliderInstance;
-	glm::vec3 colliderPosition;
-	float colliderAngle;
-	glm::vec3 colliderRotation;
-	glm::vec3 colliderScale;
-
-//	std::vector<LightStruct*> lights;
-	std::string tag;
-	bool hit;
-
-};
+		// Update World Model Matrix
+		virtual void UpdateWorldMatrix();
+		virtual glm::mat4 GetWorldModelMatrix() const;
+		virtual void UpdatePreviousModelMatrix();
+		virtual glm::mat4 GetPreviousWorldMatrix() const;
 
 
+		// Shader getter and setter
+		Shader* GetShader();
+		void SetShader(Shader* shader);
+
+		// Physics
+		CollisionComponent* collisionComponent;
+		PhysicsComponent* physicsComponent;
+
+		// Flag for deletion
+		bool deleted = false;
+
+		// To be rendered
+		bool canRender = true;
+
+		// Checks if first render of the object
+		// Used for interpolation
+		bool firstRender = true;
+
+		// Loop functions
+		virtual void Update(const float deltaTime);
+		virtual void UpdateState();
+		virtual void FixedUpdate(const float deltaTime);
+		virtual void Render(Shader* shader, const double _interpolation);
+	};
 
 #endif
-

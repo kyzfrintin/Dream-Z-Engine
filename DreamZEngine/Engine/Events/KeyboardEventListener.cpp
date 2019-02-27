@@ -20,7 +20,7 @@ void KeyboardEventListener::RegisterEngineObject(EngineClass * engine_) {
 }
 
 void KeyboardEventListener::Update(SDL_Event e, const float deltaTime) {
-	if (e.key.keysym.sym == SDLK_UP) {
+	/*if (e.key.keysym.sym == SDLK_UP) {
 		Camera::GetInstance()->ProcessKeyboard(FORWARD, deltaTime);
 	}
 	else if (e.key.keysym.sym == SDLK_DOWN) {
@@ -31,7 +31,7 @@ void KeyboardEventListener::Update(SDL_Event e, const float deltaTime) {
 	}
 	else if (e.key.keysym.sym == SDLK_RIGHT) {
 		Camera::GetInstance()->ProcessKeyboard(RIGHT, deltaTime);
-	}
+	}*/
 	
 		
 }

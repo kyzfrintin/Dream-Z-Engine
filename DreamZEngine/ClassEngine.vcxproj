@@ -132,6 +132,14 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="Engine\Core\DefaultScene.cpp" />
+    <ClCompile Include="Engine\Core\Light.cpp" />
+    <ClCompile Include="Engine\Core\LightComponent.cpp" />
+    <ClCompile Include="Engine\Core\RenderComponent.cpp" />
+    <ClCompile Include="Engine\Core\SceneManager.cpp" />
+    <ClCompile Include="Engine\Debuging\LogManager.cpp" />
+    <ClCompile Include="Engine\Debuging\Replay.cpp" />
+    <ClCompile Include="Engine\Debuging\Settings.cpp" />
     <ClCompile Include="Engine\Events\KeyboardEventListener.cpp" />
     <ClCompile Include="Engine\FX\BasicLight.cpp" />
     <ClCompile Include="Engine\Audio\AudioLoader.cpp" />
@@ -139,18 +147,30 @@
     <ClCompile Include="Engine\Camera\Camera.cpp" />
     <ClCompile Include="Engine\Core\Debug.cpp" />
     <ClCompile Include="Engine\Core\EngineClass.cpp" />
+    <ClCompile Include="Engine\Graphics\Bone.cpp" />
     <ClCompile Include="Engine\Graphics\stb_image.cpp" />
     <ClCompile Include="Engine\Main.cpp" />
     <ClCompile Include="Engine\Core\Window.cpp" />
     <ClCompile Include="Engine\Core\Timer.cpp" />
     <ClCompile Include="Engine\Math\BoundingBox.cpp" />
+    <ClCompile Include="Engine\Math\CollisionComponent.cpp" />
     <ClCompile Include="Engine\Math\CollisionDetection.CPP" />
     <ClCompile Include="Engine\Math\CollisionHandler.cpp" />
+    <ClCompile Include="Engine\Math\PhysicsComponent.cpp" />
+    <ClCompile Include="Engine\Math\PhysicsEngine.cpp" />
+    <ClCompile Include="Engine\Math\Randomizer.cpp" />
     <ClCompile Include="Engine\Rendering\3D\Cube.cpp" />
     <ClCompile Include="Engine\Rendering\3D\GameObject.cpp" />
     <ClCompile Include="Engine\Events\EventListener.cpp" />
+    <ClCompile Include="Engine\Rendering\3D\ModelComponent.cpp" />
+    <ClCompile Include="Engine\Rendering\3D\ModelMesh.cpp">
+      <DeploymentContent>true</DeploymentContent>
+    </ClCompile>
     <ClCompile Include="Engine\Rendering\3D\SkyBox.cpp" />
     <ClCompile Include="Engine\Rendering\3D\Terrain.cpp" />
+    <ClCompile Include="Engine\Rendering\Renderer.cpp" />
+    <ClCompile Include="Engine\Timers\Cooldown.cpp" />
+    <ClCompile Include="Engine\Timers\MasterClock.cpp" />
     <ClCompile Include="Game\Game1.cpp" />
     <ClCompile Include="Engine\Rendering\3D\Mesh.cpp" />
     <ClCompile Include="Engine\Rendering\3D\Model.cpp" />
@@ -167,6 +187,16 @@
     <ClCompile Include="Engine\FX\LightingManager.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Engine\Core\Component.h" />
+    <ClInclude Include="Engine\Core\DefaultScene.h" />
+    <ClInclude Include="Engine\Core\Light.h" />
+    <ClInclude Include="Engine\Core\LightComponent.h" />
+    <ClInclude Include="Engine\Core\RenderComponent.h" />
+    <ClInclude Include="Engine\Core\Scene.h" />
+    <ClInclude Include="Engine\Core\SceneManager.h" />
+    <ClInclude Include="Engine\Debuging\LogManager.h" />
+    <ClInclude Include="Engine\Debuging\Replay.h" />
+    <ClInclude Include="Engine\Debuging\Settings.h" />
     <ClInclude Include="Engine\Events\KeyboardEventListener.h" />
     <ClInclude Include="Engine\FX\BasicLight.h" />
     <ClInclude Include="Engine\Audio\AudioLoader.h" />
@@ -177,16 +207,33 @@
     <ClInclude Include="Engine\Core\GameInterface.h" />
     <ClInclude Include="Engine\Core\Window.h" />
     <ClInclude Include="Engine\Core\Timer.h" />
+    <ClInclude Include="Engine\Graphics\Animation.h" />
+    <ClInclude Include="Engine\Graphics\Bone.h" />
     <ClInclude Include="Engine\Graphics\stb_image.h" />
     <ClInclude Include="Engine\Math\BoundingBox.h" />
+    <ClInclude Include="Engine\Math\CollisionComponent.h" />
     <ClInclude Include="Engine\Math\CollisionDetection.h" />
     <ClInclude Include="Engine\Math\CollisionHandler.h" />
+    <ClInclude Include="Engine\Math\ContactData.h" />
+    <ClInclude Include="Engine\Math\PhysicsComponent.h" />
+    <ClInclude Include="Engine\Math\PhysicsEngine.h" />
+    <ClInclude Include="Engine\Math\Randomizer.h" />
     <ClInclude Include="Engine\Math\Ray.h" />
+    <ClInclude Include="Engine\Math\Volumes.h" />
     <ClInclude Include="Engine\Rendering\3D\Cube.h" />
     <ClInclude Include="Engine\Rendering\3D\GameObject.h" />
     <ClInclude Include="Engine\Events\EventListener.h" />
+    <ClInclude Include="Engine\Rendering\3D\ModelComponent.h">
+      <DeploymentContent>true</DeploymentContent>
+    </ClInclude>
+    <ClInclude Include="Engine\Rendering\3D\ModelMesh.h">
+      <DeploymentContent>true</DeploymentContent>
+    </ClInclude>
     <ClInclude Include="Engine\Rendering\3D\SkyBox.h" />
     <ClInclude Include="Engine\Rendering\3D\Terrain.h" />
+    <ClInclude Include="Engine\Rendering\Renderer.h" />
+    <ClInclude Include="Engine\Timers\Cooldown.h" />
+    <ClInclude Include="Engine\Timers\MasterClock.h" />
     <ClInclude Include="Game\Game1.h" />
     <ClInclude Include="Engine\Rendering\3D\Mesh.h" />
     <ClInclude Include="Engine\Rendering\3D\Model.h" />
@@ -203,17 +250,63 @@
     <ClInclude Include="Engine\FX\LightingManager.h" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="Engine\Shaders\bloom.fs" />
+    <None Include="Engine\Shaders\bloom.vs" />
+    <None Include="Engine\Shaders\blur.fs" />
+    <None Include="Engine\Shaders\blur.vs" />
     <None Include="Engine\Shaders\ColourFragmentShader.glsl" />
     <None Include="Engine\Shaders\ColourVertexShader.glsl" />
+    <None Include="Engine\Shaders\default.fs" />
+    <None Include="Engine\Shaders\default.vs" />
+    <None Include="Engine\Shaders\FragmentShader.fs" />
     <None Include="Engine\Shaders\FragmentShader.glsl" />
+    <None Include="Engine\Shaders\image.fs" />
+    <None Include="Engine\Shaders\image.vs" />
+    <None Include="Engine\Shaders\lamp.fs" />
+    <None Include="Engine\Shaders\lamp.vs" />
+    <None Include="Engine\Shaders\model.fs" />
+    <None Include="Engine\Shaders\model.vs" />
     <None Include="Engine\Shaders\modelFrag.glsl" />
     <None Include="Engine\Shaders\modelVert.glsl" />
+    <None Include="Engine\Shaders\particle.fs" />
+    <None Include="Engine\Shaders\particle.vs" />
+    <None Include="Engine\Shaders\projectile.fs" />
+    <None Include="Engine\Shaders\projectile.vs" />
+    <None Include="Engine\Shaders\screen.fs" />
+    <None Include="Engine\Shaders\screen.vs" />
+    <None Include="Engine\Shaders\shadowdepth.fs" />
+    <None Include="Engine\Shaders\shadowdepth.vs" />
+    <None Include="Engine\Shaders\shadowmapping.fs" />
+    <None Include="Engine\Shaders\shadowmapping.vs" />
+    <None Include="Engine\Shaders\shadowquad.fs" />
+    <None Include="Engine\Shaders\shadowquad.vs" />
     <None Include="Engine\Shaders\skybox.fs" />
     <None Include="Engine\Shaders\skybox.vs" />
+    <None Include="Engine\Shaders\textshader.fs" />
+    <None Include="Engine\Shaders\textshader.vs" />
+    <None Include="Engine\Shaders\toon.fs" />
+    <None Include="Engine\Shaders\toon.vs" />
     <None Include="Engine\Shaders\VertexShader.glsl" />
+    <None Include="Engine\Shaders\VertexShader.vs" />
+    <None Include="Resources\Models\boblampclean.md5anim" />
+    <None Include="Resources\Models\boblampclean.md5mesh" />
+    <None Include="Resources\Models\Walking.fbx" />
   </ItemGroup>
   <ItemGroup>
     <Media Include="Resources\Audio\UpbeatFunk.wav" />
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include="Resources\Models\guard1_body.tga" />
+    <Image Include="Resources\Models\guard1_face.tga" />
+    <Image Include="Resources\Models\guard1_helmet.tga" />
+    <Image Include="Resources\Models\iron_grill.tga" />
+    <Image Include="Resources\Models\round_grill.tga" />
+    <Image Include="Resources\Skybox\Skyboxes\back.jpg" />
+    <Image Include="Resources\Skybox\Skyboxes\bottom.jpg" />
+    <Image Include="Resources\Skybox\Skyboxes\front.jpg" />
+    <Image Include="Resources\Skybox\Skyboxes\left.jpg" />
+    <Image Include="Resources\Skybox\Skyboxes\right.jpg" />
+    <Image Include="Resources\Skybox\Skyboxes\top.jpg" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

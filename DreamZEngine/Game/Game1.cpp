@@ -4,83 +4,123 @@
 
 Game1::Game1()
 {
-
 }
-
 
 Game1::~Game1()
 {
-
-
-	//delete object1;
-
+	sceneManager = nullptr;
 }
 
 bool Game1::Initialize()
 {
+	// Make reference to the scene manager
+	sceneManager = EngineClass::GetInstance()->GetSceneManager();
+
+	// If you plan to use the scenemanagers scene vector you dont need to set these values all the time
+	// Set camera options
+	cameraList[0]->Yaw = 0.0f;
+	cameraList[0]->Zoom = 45.0f;
+
+	// Set screen options
+	sceneManager->EnableSplitscreen(false);
+	sceneManager->EnableFullscreen(false);
+	sceneManager->ShowFPS(true);
+	sceneManager->GetRenderer()->EnableBloom(true);
+
+	// Load shaders
+	defaultShader = new Shader("Engine/Shaders/model.vs", "Engine/Shaders/model.fs");
+	skyboxShader = new Shader("Engine/Shaders/skybox.vs", "Engine/Shaders/skybox.fs");
+
+	//// Put shaders into shader manager
+	//defaultShaderHandle = sceneManager->GetRenderer()->GetShaderManager()->put(std::string("default"), defaultShader);
+	//skyboxShaderHandle = sceneManager->GetRenderer()->GetShaderManager()->put(std::string("skybox"), skyboxShader);
+
+	// Make skybox, load its textures, set properties, and give to the renderer
+	//skybox = new Skybox();
+	//std::vector<std::string> faces;
+	//faces.push_back("Resources/Skybox/Skyboxes/ame_nebula/right.jpg");
+	//faces.push_back("Resources/Skybox/Skyboxes/ame_nebula/left.jpg");
+	//faces.push_back("Resources/Skybox/Skyboxes/ame_nebula/top.jpg");
+	//faces.push_back("Resources/Skybox/Skyboxes/ame_nebula/bottom.jpg");
+	//faces.push_back("Resources/Skybox/Skyboxes/ame_nebula/back.jpg");
+	//faces.push_back("Resources/Skybox/Skyboxes/ame_nebula/front.jpg");
+	//skybox->LoadTextures(faces);
+	//skybox->SetShader(skyboxShader);
 
 	
-	Shader* ourShader = new Shader("Engine/Shaders/vert.glsl", "Engine/Shaders/frag.glsl");
-	Shader* modelShader = new Shader("Engine/Shaders/modelVert.glsl", "Engine/Shaders/modelFrag.glsl");
-	Shader* lampShader = new Shader("Engine/Shaders/lampVert.glsl", "Engine/Shaders/lampFrag.glsl");
-	Shader* skyBoxShader = new Shader("Engine/Shaders/skybox.vs", "Engine/Shaders/skybox.fs");
-	model = new Model(modelShader, "Resources/Objects/nanosuit/nanosuit.obj");
 
-	lamp = new BasicLight(lampShader, "pointLight1");
-	//cb = new Cube(lampShader, "collision", model->GetBoundingBox().minVert,model->GetBoundingBox().maxVert);
-	terrain = new Terrain(ourShader);
-	skybox = new SkyBox();
-	LightStruct* pointLights1 = new LightStruct();
-	pointLights1->position = (glm::vec3(0.0f, 0.0f, 0.0f));
-	//LightStruct* pointLights2 = new LightStruct();
-	//pointLights2->position = (glm::vec3(2.2f, 0.0f, 2.0f));
-	//LightStruct* pointLights3 = new LightStruct();
-	//pointLights3->position = (glm::vec3(-2.2f, 0.0f, 2.0f));
+	//kyouko = new Model("Resources/Models/Kyouko/figyrk0003.obj");
+	//kyouko = new Model("Resources/Models/Robot_Base_Greybox/Robot_Var_002_Gurran.obj");
+	kyouko = new Model("Resources/Models/Robot_Base_Greybox/Robot_Var_002_Gurran.obj");
+	kyouko->SetShader(defaultShader);
+	kyouko->physicsComponent->SetPosition(glm::vec3(-1.0f, -1.0f, -2.5f));
+	kyouko->SetWorldScale(0.008f);
+	kyouko->physicsComponent->SetPhysicsType(PhysicsComponent::Physics_Type::STATIC);
+	kyouko->physicsComponent->SetElasticity(PhysicsComponent::Elastic_Type::NON_ELASTIC);
+	kyouko->physicsComponent->SetMaterialType(PhysicsComponent::Material_Type::ROUGH);
+	kyouko->physicsComponent->SetMass(0.0f);
 
-	//SceneGraph::GetInstance()->AddLight(lamp, lamp->tag, pointLights1);
-	//SceneGraph::GetInstance()->AddCollider(cb);
-	////SceneGraph::GetInstance()->AddLight(lamp3, lamp3->tag, pointLights3);
-	//SceneGraph::GetInstance()->AddGameObject(new GameObject(cb), "collision");
-	//SceneGraph::GetInstance()->GetGameObject("collision")->SetScale(glm::vec3(2.0f));
+	kyouko2 = new Model("Resources/Objects/pen/Capoeira.fbx");
+	kyouko2->SetShader(defaultShader);
+	kyouko2->physicsComponent->SetPosition(glm::vec3(1.0f, -1.0f, -2.5f));
+	kyouko2->SetWorldScale(0.008f);
+	kyouko2->physicsComponent->SetPhysicsType(PhysicsComponent::Physics_Type::STATIC);
+	kyouko2->physicsComponent->SetElasticity(PhysicsComponent::Elastic_Type::NON_ELASTIC);
+	kyouko2->physicsComponent->SetMaterialType(PhysicsComponent::Material_Type::ROUGH);
+	kyouko2->physicsComponent->SetMass(0.0f);
+
+	// Lights
+	//
+	// Make point light
+	pointLight = new Light();
+	pointLight->SetShader(defaultShader);
+	pointLight->renderComponent->SetRenderType(RenderComponent::Render_Type::CUBE);
+	pointLight->renderComponent->SetColour(1.0f, 1.0f, 1.0f);
+	pointLight->renderComponent->CanRender(false);
+	pointLight->SetWorldPosition(2.0f, 0.0f, -2.5f);
+	pointLight->SetWorldScale(0.5f);
+	pointLight->lightComponent->SetLightType(LightComponent::Light_Type::POINTLIGHT);
+	pointLight->lightComponent->SetColour(glm::vec3(1.0f, 1.0f, 1.0f));
+	//
+
+	// Make directional light
+	dirLight = new Light(LightComponent::Light_Type::DIRECTIONAL);
+	dirLight->lightComponent->SetDirection(glm::vec3(1.0f, -1.0f, 1.0f));
+	dirLight->lightComponent->SetColour(glm::vec3(0.3f, 0.3f, 0.3f));
+	//
+
+	AddObject(kyouko);
+	AddObject(kyouko2);
+	AddLightObject(dirLight);
+	AddLightObject(pointLight);
+
 	
-
-
-	SceneGraph::GetInstance()->AddSkybox(skybox);
-	SceneGraph::GetInstance()->AddTerain(terrain);
-
-	//AudioHandler::GetInstance()->AddAudio("song","pop.wav", AudioEnum::MUSIC);
-
-	//AudioLoader::GetInstance()->PlayMusic("UpbeatFunk.WAV");
-
-	SceneGraph::GetInstance()->AddModel(model);
-	SceneGraph::GetInstance()->AddGameObject(new GameObject(model), "nano");
-	SceneGraph::GetInstance()->GetGameObject("nano")->SetPosition(glm::vec3(5.0f, 0.75f, -5.0f));
-	SceneGraph::GetInstance()->GetGameObject("nano")->SetScale(glm::vec3(0.5f));
-
-	/*std::cout << "Object 1 bounding box: " << std::endl;
-	std::cout << "\tMin Vert: " << glm::to_string(SceneGraph::GetInstance()->GetGameObject("nano")->GetBoundingBox().minVert) << std::endl;
-	std::cout << "\tMax Vert: " << glm::to_string(SceneGraph::GetInstance()->GetGameObject("nano")->GetBoundingBox().maxVert) << std::endl;
-
-	std::cout << "Object 2 bounding box: " << std::endl;
-	std::cout << "\tMin Vert: " << glm::to_string(SceneGraph::GetInstance()->GetGameObject("collision").) << std::endl;
-	std::cout << "\tMax Vert: " << glm::to_string(SceneGraph::GetInstance()->GetGameObject("collision")->GetBoundingBox().maxVert) << std::endl;*/
-
 	return true;
 }
 
-
-
-void Game1::Update(const float deltaTime_)
+void Game1::Update(const float deltaTime)
 {
+	float fade = (sin(z += deltaTime) / 2.0f) + 0.5f;
+	//startText->SetAlpha(fade);
+	//cameraList[0]->SetRotationX(cameraList[0]->Yaw += deltaTime * 5);
 
-	
 
 }
-void Game1::Render()
-{
 
-	//cb->Render();
-	//	terrain->Render();
-	SceneGraph::GetInstance()->Render();
-	//model->Render();
+void Game1::FixedUpdate(const float deltaTime)
+{
+	kyouko->SetWorldRotation(glm::vec3(0.0f, 1.0f, 0.0f), kyouko->GetWorldRotationAngle() + 2.0f * deltaTime);
+	kyouko2->SetWorldRotation(glm::vec3(0.0f, 1.0f, 0.0f), kyouko->GetWorldRotationAngle() + -2.0f * deltaTime);
+}
+
+void Game1::HandleEvents(SDL_Event events)
+{
+	
+}
+
+void Game1::HandleStates(const Uint8 *state)
+{
+	if (state[SDL_SCANCODE_SPACE]) {
+		sceneManager->NextScene();
+	}
 }

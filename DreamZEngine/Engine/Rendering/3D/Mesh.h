@@ -1,61 +1,51 @@
 #ifndef MESH_H
 #define MESH_H
 
-#include <glew.h> // holds all OpenGL type declarations
-
-#include <glm/glm.hpp>
-#include <glm/gtc/matrix_transform.hpp>
-
+#include <glew.h>
+#include <vector>
+#include <glm\glm.hpp>
+#include <SDL_image.h>
 #include "../../Graphics/Shader.h"
 
-#include <string>
-#include <fstream>
-#include <sstream>
-#include <iostream>
-#include <map>
-#include <vector>
-using namespace std;
 
-struct Vertex {
-	// position
-	glm::vec3 Position;
-	// normal
-	glm::vec3 Normal;
-	// texCoords
-	glm::vec2 TexCoords;
-	// tangent
-	glm::vec3 Tangent;
-	// bitangent
-	glm::vec3 Bitangent;
-};
 
-struct Texture {
-	unsigned int id;
-	string type;
-	string path;
-};
+	//Create a structure that defines what a vertex will have within our program
+	//A Struct is a class-like object where all member variables and functions are public
+	//Today we will just be starting with position data for the vertext
+	//but in the future we will be adding normals and texture coordinates
+	struct Vertex {
+		glm::vec3 position;
+		glm::vec3 normal;
+		glm::vec3 color; //This will be a range from 0-1 instead of 0-255
+		glm::vec2 textureCoordinates;
+	};
 
-class Mesh {
-public:
-	/*  Mesh Data  */
-	vector<Vertex> vertices;
-	vector<GLuint> indices;
-	vector<Texture> textures;
-	GLuint VAO;
+	class Mesh {
+	public:
+		Mesh(std::vector<Vertex>* vertexList_);
+		~Mesh();
 
-	/*  Functions  */
-	// constructor
-	Mesh(vector<Vertex> vertices, vector<GLuint> indices, vector<Texture> textures);
+		//This will be used to draw the mesh
+		void Render(Shader* shader);
+		void RenderPoints(Shader* shader);
 
-	// render the mesh
-	void Render(Shader* shader, std::vector<glm::mat4> instances_);
+		void LoadTexture(const char* path, int id);
+		void LoadTextures(std::vector<char*> faces);
 
-private:
-	/*  Render data  */
-	GLuint VBO, EBO;
+	private:
+		void GenerateBuffers();
 
-	/*  Functions    */
-	// initializes all the buffer objects/arrays
-	void setupMesh();
-};
-#endif
+
+
+		//VAO: Vertex Array Object
+		//The VAO will hold all of our data for the shape's vertices that we define
+		//VBO: Vertex Buffer Object
+		//The VBO will be the space where our shape is stored on the GPU
+		//GLuints will be the addresses as to where this data is stored on the GPU
+		GLuint VAO, VBO;
+		std::vector<Vertex> vertexList;
+		unsigned int textureID;
+	};
+
+
+#endif MESH_H
